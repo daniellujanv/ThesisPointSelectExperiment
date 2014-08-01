@@ -184,16 +184,16 @@ public class Gestures {
 				//relation between length of positive defect and average length of negative defects
 				if(finalDefects.size() == 1){
 					Point defect_one = finalDefects.get(0);
-					double relationPositive_AvgNegative = Tools.getDistanceBetweenPoints(centroid, defect_one)/avgDistanceCenterPoint_negative;
-					Log.i(TAG+"PointSelect", "positive_avgNegative::"+ relationPositive_AvgNegative
-							+ " negatives::"+negativeDefects);
-					if(relationPositive_AvgNegative > 5.0){
+//					double relationPositive_AvgNegative = Tools.getDistanceBetweenPoints(centroid, defect_one)/avgDistanceCenterPoint_negative;
+//					Log.i(TAG+"PointSelect", "positive_avgNegative::"+ relationPositive_AvgNegative
+//							+ " negatives::"+negativeDefects);
+//					if(relationPositive_AvgNegative > 5.0){
 						//					Core.circle(mRgb, defect_one, 5, Tools.red, -1);
 						//					lastPointedLocation = defect_one;
 						//					return true;
 						//					
 						return defect_one;				
-					}
+//					}
 				}
 			}else{
 				if(finalDefects.size() == 2){
@@ -210,7 +210,7 @@ public class Gestures {
 					}else{
 						relationDistanceCenterPoints = distPointCenter_2 / distPointCenter_1;
 					}
-					Log.i(TAG+"PointSelect_end", "relationDistCenter::"+ relationDistanceCenterPoints
+					Log.i(TAG+"Gestures", "relationDistCenter::"+ relationDistanceCenterPoints
 							+ " point1::"+distPointCenter_1
 							+ " point2::"+distPointCenter_2
 							);

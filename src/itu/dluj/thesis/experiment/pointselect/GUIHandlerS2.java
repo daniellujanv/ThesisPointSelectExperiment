@@ -6,16 +6,17 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import android.util.Log;
+
 public class GUIHandlerS2 {
 
 	private int screenWidth;
 	private int screenHeight;
 	private int iBtnToClick;
 	private Point[][] pBtnsCoords;
-	private Rect[] rBtnsRoi;
 	private boolean[] bBtnsClicked = new boolean[]{false,false,false, false,false,false};
-	public boolean allClicked = true;
 	private int iBtnsClicked = 0;
+	public boolean allClicked = false;
 
 	public GUIHandlerS2(int width, int height){
 		screenWidth = width;
@@ -83,10 +84,13 @@ public class GUIHandlerS2 {
 		 * Coords [3] == lower right outer rectangle
 		 */
 		Rect rect_one = new Rect(pBtnsCoords[iBtnToClick][0], pBtnsCoords[iBtnToClick][1]);
+		Log.i("GUIHandlerS2", "iBtnToClick::"+iBtnToClick);
 		if(click.inside(rect_one)){
+			Log.i("GUIHandlerS2", "acceptedClick::"+iBtnToClick);
 			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked  = iBtnsClicked + 1;
-			if(iBtnsClicked == 3){
+			iBtnToClick = iBtnToClick + 1;
+			if(iBtnsClicked == 6){
 				allClicked = true;
 			}
 			return true;
@@ -96,6 +100,13 @@ public class GUIHandlerS2 {
 	}
 	
 	/******************************* Utility methods ******************************************/
+	public void reset(){
+		iBtnToClick = 0;
+		iBtnsClicked = 0;
+		allClicked = false;
+		bBtnsClicked = new boolean[]{false,false,false, false,false,false};
+	}
+	
 	
 	/*
 	 * Utility method - writes to color image

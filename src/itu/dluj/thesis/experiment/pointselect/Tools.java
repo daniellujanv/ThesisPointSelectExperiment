@@ -36,25 +36,12 @@ public class Tools {
 
 		for(int i=0; i< convexityDefects.size(); i++){
 			start = convexityDefects.get(i)[0]; 
-			//			end = contour.get(defects[i+1]);
 			farthest = convexityDefects.get(i)[1];
-			//				depth = Math.round(defects[i+3]/256.0);
-
-			//		        convexhull
-			//				Core.line(mRgb, start, end, blue, 3);
 			//		        line from farthest point to start
-			Core.line(mRgb, farthest, start, red, 1);
+//			Core.line(mRgb, farthest, start, red, 1);
 			//		        line from center of contour to start
-			Core.line(mRgb, start, handContourCentroid, blue, 1);
-			//		        points
-			//			Core.circle(mRgb, end, 5, red, -1);
+//			Core.line(mRgb, start, handContourCentroid, blue, 1);
 			Core.circle(mRgb, start, 2, red, -1);
-			//			Core.circle(mRgb, farthest, 5, magenta, -1);
-			//		        write distance between hull and farthest point
-			//		        tools.setText(image, end, str(distance))
-			//		        distanceCenterHull = tools.getDistanceBetweenPoints(center, end)
-			//		        centerLine = tools.getMidPointInLine(center, end)
-			//		        tools.setText(image, centerLine, str(distanceCenterHull))	
 		}
 		return mRgb;
 	}

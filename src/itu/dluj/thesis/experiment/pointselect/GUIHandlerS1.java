@@ -12,10 +12,9 @@ public class GUIHandlerS1 {
 	private int screenHeight;
 	private int iBtnToClick;
 	private Point[][] pBtnsCoords;
-	private Rect[] rBtnsRoi;
 	private boolean[] bBtnsClicked = new boolean[]{false,false,false};
 	private int iBtnsClicked = 0;
-	public boolean allClicked = true;
+	public boolean allClicked = false;
 
 	public GUIHandlerS1(int width, int height){
 		screenWidth = width;
@@ -84,6 +83,7 @@ public class GUIHandlerS1 {
 		if(click.inside(rect_one)){
 			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
+			iBtnToClick = iBtnToClick + 1;
 			if(iBtnsClicked == 3){
 				allClicked = true;
 			}
@@ -93,6 +93,13 @@ public class GUIHandlerS1 {
 	}
 	
 	/******************************* Utility methods ******************************************/
+	public void reset(){
+		iBtnToClick = 0;
+		iBtnsClicked = 0;
+		allClicked = false;
+		bBtnsClicked = new boolean[]{false,false,false};
+	}
+	
 	
 	/*
 	 * Utility method - writes to color image
