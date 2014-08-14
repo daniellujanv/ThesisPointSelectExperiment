@@ -6,40 +6,41 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import android.util.Log;
+
 public class GUIHandlerS1 {
 
 	private int screenWidth;
 	private int screenHeight;
 	private int iBtnToClick;
 	private Point[][] pBtnsCoords;
-	private boolean[] bBtnsClicked = new boolean[]{false,false,false};
+	private boolean[] bBtnsClicked = new boolean[]{false,false};
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
+	public long endS1;
+	public long startOfExperiment;
 
-	public GUIHandlerS1(int width, int height){
+	public GUIHandlerS1(int width, int height, long milis){
+		startOfExperiment = milis;
 		screenWidth = width;
 		screenHeight = height;
 		iBtnToClick = 0;
 		//fullScreenImg Coords
-		pBtnsCoords = new Point[3][3];
-		pBtnsCoords[0][0] = new Point(screenWidth*0.05, screenHeight*0.05);
-		pBtnsCoords[0][1] = new Point(screenWidth*0.28, screenHeight*0.95);
+		pBtnsCoords = new Point[2][3];
+		pBtnsCoords[0][0] = new Point(screenWidth*0.00, screenHeight*0.00);
+		pBtnsCoords[0][1] = new Point(screenWidth*0.49, screenHeight);
 		pBtnsCoords[0][2] = new Point(screenWidth*0.15, screenHeight*0.45);
 		
-		pBtnsCoords[1][0] = new Point(screenWidth*0.38, screenHeight*0.05);
-		pBtnsCoords[1][1] = new Point(screenWidth*0.61, screenHeight*0.95);
-		pBtnsCoords[1][2] = new Point(screenWidth*0.48, screenHeight*0.45);
+		pBtnsCoords[1][0] = new Point(screenWidth*0.51, screenHeight*0.0);
+		pBtnsCoords[1][1] = new Point(screenWidth, screenHeight);
+		pBtnsCoords[1][2] = new Point(screenWidth*0.70, screenHeight*0.45);
 		
-		pBtnsCoords[2][0] = new Point(screenWidth*0.71, screenHeight*0.05);
-		pBtnsCoords[2][1] = new Point(screenWidth*0.95, screenHeight*0.95);
-		pBtnsCoords[2][2] = new Point(screenWidth*0.81, screenHeight*0.45);
-
 	}
 	
 	/******************************** Drawing methods ****************************************/
 	
 	public Mat drawSquares(Mat mRgb){
-		Mat rec = mRgb.clone();
+		Mat rec = mRgb;
 		if(bBtnsClicked[0] == true){
 			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.green, -1);
 		}else{
@@ -50,18 +51,12 @@ public class GUIHandlerS1 {
 		}else{
 			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.red, -1);
 		}
-		if(bBtnsClicked[2] == true){
-			Core.rectangle(rec, pBtnsCoords[2][0], pBtnsCoords[2][1], Tools.green, -1);
-		}else{
-			Core.rectangle(rec, pBtnsCoords[2][0], pBtnsCoords[2][1], Tools.red, -1);
-		}
 		
 		rec = writeInfoToImage(rec, pBtnsCoords[0][2], "1");
 		rec = writeInfoToImage(rec, pBtnsCoords[1][2], "2");
-		rec = writeInfoToImage(rec, pBtnsCoords[2][2], "3");
 
 		Mat output = new Mat();
-		Core.addWeighted(mRgb, 0.5, rec, 0.5, 0, output);
+		Core.addWeighted(mRgb, 0, rec, 1.0, 0, output);
 
 		return output;
 	}
@@ -84,8 +79,10 @@ public class GUIHandlerS1 {
 			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
-			if(iBtnsClicked == 3){
+			if(iBtnsClicked == 2){
 				allClicked = true;
+				endS1 = System.currentTimeMillis();
+				Log.i("GUIHandlerS1", "endS1 - startOfExperiment :: "+ (endS1 - startOfExperiment)/1000 + " secs");
 			}
 			return true;
 		}
@@ -97,7 +94,7 @@ public class GUIHandlerS1 {
 		iBtnToClick = 0;
 		iBtnsClicked = 0;
 		allClicked = false;
-		bBtnsClicked = new boolean[]{false,false,false};
+		bBtnsClicked = new boolean[]{false,false};
 	}
 	
 	

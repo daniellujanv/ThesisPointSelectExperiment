@@ -6,69 +6,86 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
+import android.util.Log;
+
 public class GUIHandlerS3 {
 
 	private int screenWidth;
 	private int screenHeight;
 	private int iBtnToClick;
 	private Point[][] pBtnsCoords;
-	private boolean[] bBtnsClicked = new boolean[]{false,false,false, false, false, false, false,false,false, false};
+	private boolean[] bBtnsClicked = new boolean[]{false,false,false, false, 
+													false, false, false,false,
+													false, false, false, false};
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
+	public long endS3;
+	public long startOfExperiment;
 	
-	public GUIHandlerS3(int width, int height){
+	public GUIHandlerS3(int width, int height, long milis){
+		startOfExperiment = milis;
 		screenWidth = width;
 		screenHeight = height;
 		iBtnToClick = 0;
 		//fullScreenImg Coords
-		pBtnsCoords = new Point[10][3];
+		pBtnsCoords = new Point[12][3];
 		//upper row
-		pBtnsCoords[0][0] = new Point(screenWidth*0.05, screenHeight*0.05);
-		pBtnsCoords[0][1] = new Point(screenWidth*0.15, screenHeight*0.45);
+		pBtnsCoords[0][0] = new Point(screenWidth*0.0, screenHeight*0.0);
+		pBtnsCoords[0][1] = new Point(screenWidth*0.24, screenHeight*0.32);
 		pBtnsCoords[0][2] = new Point(screenWidth*0.10, screenHeight*0.25);
 		
-		pBtnsCoords[1][0] = new Point(screenWidth*0.25, screenHeight*0.05);
-		pBtnsCoords[1][1] = new Point(screenWidth*0.35, screenHeight*0.45);
+		pBtnsCoords[1][0] = new Point(screenWidth*0.25, screenHeight*0.0);
+		pBtnsCoords[1][1] = new Point(screenWidth*0.49, screenHeight*0.32);
 		pBtnsCoords[1][2] = new Point(screenWidth*0.30, screenHeight*0.25);
 		
-		pBtnsCoords[2][0] = new Point(screenWidth*0.45, screenHeight*0.05);
-		pBtnsCoords[2][1] = new Point(screenWidth*0.55, screenHeight*0.45);
-		pBtnsCoords[2][2] = new Point(screenWidth*0.50, screenHeight*0.25);
+		pBtnsCoords[2][0] = new Point(screenWidth*0.50, screenHeight*0.0);
+		pBtnsCoords[2][1] = new Point(screenWidth*0.74, screenHeight*0.32);
+		pBtnsCoords[2][2] = new Point(screenWidth*0.60, screenHeight*0.25);
 		
-		pBtnsCoords[3][0] = new Point(screenWidth*0.65, screenHeight*0.05);
-		pBtnsCoords[3][1] = new Point(screenWidth*0.75, screenHeight*0.45);
-		pBtnsCoords[3][2] = new Point(screenWidth*0.70, screenHeight*0.25);
+		pBtnsCoords[3][0] = new Point(screenWidth*0.75, screenHeight*0.0);
+		pBtnsCoords[3][1] = new Point(screenWidth, screenHeight*0.32);
+		pBtnsCoords[3][2] = new Point(screenWidth*0.90, screenHeight*0.25);
 		
-		pBtnsCoords[4][0] = new Point(screenWidth*0.85, screenHeight*0.05);
-		pBtnsCoords[4][1] = new Point(screenWidth*0.95, screenHeight*0.45);
-		pBtnsCoords[4][2] = new Point(screenWidth*0.90, screenHeight*0.25);
-		//lower row
-		pBtnsCoords[5][0] = new Point(screenWidth*0.05, screenHeight*0.55);
-		pBtnsCoords[5][1] = new Point(screenWidth*0.15, screenHeight*0.95);
-		pBtnsCoords[5][2] = new Point(screenWidth*0.10, screenHeight*0.75);
-		
-		pBtnsCoords[6][0] = new Point(screenWidth*0.25, screenHeight*0.55);
-		pBtnsCoords[6][1] = new Point(screenWidth*0.35, screenHeight*0.95);
-		pBtnsCoords[6][2] = new Point(screenWidth*0.30, screenHeight*0.75);
-		
-		pBtnsCoords[7][0] = new Point(screenWidth*0.45, screenHeight*0.55);
-		pBtnsCoords[7][1] = new Point(screenWidth*0.55, screenHeight*0.95);
-		pBtnsCoords[7][2] = new Point(screenWidth*0.50, screenHeight*0.75);
+		//middle row
+		pBtnsCoords[4][0] = new Point(screenWidth*0.0, screenHeight*0.33);
+		pBtnsCoords[4][1] = new Point(screenWidth*0.24, screenHeight*0.65);
+		pBtnsCoords[4][2] = new Point(screenWidth*0.10, screenHeight*0.55);
 
-		pBtnsCoords[8][0] = new Point(screenWidth*0.65, screenHeight*0.55);
-		pBtnsCoords[8][1] = new Point(screenWidth*0.75, screenHeight*0.95);
-		pBtnsCoords[8][2] = new Point(screenWidth*0.70, screenHeight*0.75);
+		pBtnsCoords[5][0] = new Point(screenWidth*0.25, screenHeight*0.33);
+		pBtnsCoords[5][1] = new Point(screenWidth*0.49, screenHeight*0.65);
+		pBtnsCoords[5][2] = new Point(screenWidth*0.30, screenHeight*0.55);
 		
-		pBtnsCoords[9][0] = new Point(screenWidth*0.85, screenHeight*0.55);
-		pBtnsCoords[9][1] = new Point(screenWidth*0.95, screenHeight*0.95);
-		pBtnsCoords[9][2] = new Point(screenWidth*0.90, screenHeight*0.75);
+		pBtnsCoords[6][0] = new Point(screenWidth*0.50, screenHeight*0.33);
+		pBtnsCoords[6][1] = new Point(screenWidth*0.74, screenHeight*0.65);
+		pBtnsCoords[6][2] = new Point(screenWidth*0.60, screenHeight*0.55);
+		
+		pBtnsCoords[7][0] = new Point(screenWidth*0.75, screenHeight*0.33);
+		pBtnsCoords[7][1] = new Point(screenWidth, screenHeight*0.65);
+		pBtnsCoords[7][2] = new Point(screenWidth*0.80, screenHeight*0.55);
+
+		//lower row
+		pBtnsCoords[8][0] = new Point(screenWidth*0.0, screenHeight*0.66);
+		pBtnsCoords[8][1] = new Point(screenWidth*0.24, screenHeight);
+		pBtnsCoords[8][2] = new Point(screenWidth*0.10, screenHeight*0.75);
+		
+		pBtnsCoords[9][0] = new Point(screenWidth*0.25, screenHeight*0.66);
+		pBtnsCoords[9][1] = new Point(screenWidth*0.49, screenHeight);
+		pBtnsCoords[9][2] = new Point(screenWidth*0.30, screenHeight*0.75);
+		
+		pBtnsCoords[10][0] = new Point(screenWidth*0.50, screenHeight*0.66);
+		pBtnsCoords[10][1] = new Point(screenWidth*0.74, screenHeight);
+		pBtnsCoords[10][2] = new Point(screenWidth*0.60, screenHeight*0.75);
+		
+		pBtnsCoords[11][0] = new Point(screenWidth*0.75, screenHeight*0.66);
+		pBtnsCoords[11][1] = new Point(screenWidth, screenHeight);
+		pBtnsCoords[11][2] = new Point(screenWidth*0.80, screenHeight*0.75);
 	}
 	
 	/******************************** Drawing methods ****************************************/
 	
 	public Mat drawSquares(Mat mRgb){
 		Mat rec = mRgb.clone();
-		for(int i = 0; i< 10; ++i){
+		for(int i = 0; i< 12; ++i){
 			if(bBtnsClicked[i] == true){
 				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.green, -1);
 			}else{
@@ -78,7 +95,7 @@ public class GUIHandlerS3 {
 		}
 
 		Mat output = new Mat();
-		Core.addWeighted(mRgb, 0.5, rec, 0.5, 0, output);
+		Core.addWeighted(mRgb, 0, rec, 1.0, 0, output);
 
 		return output;
 	}
@@ -101,7 +118,9 @@ public class GUIHandlerS3 {
 			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
-			if(iBtnsClicked == 10){
+			if(iBtnsClicked == 12){
+				endS3 = System.currentTimeMillis();
+				Log.i("GUIHandlerS3", "endS3 - startOfExperiment :: "+ (endS3 - startOfExperiment)/1000 + " secs");
 				allClicked = true;
 			}
 			return true;

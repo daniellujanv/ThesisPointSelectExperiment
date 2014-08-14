@@ -17,36 +17,39 @@ public class GUIHandlerS2 {
 	private boolean[] bBtnsClicked = new boolean[]{false,false,false, false,false,false};
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
+	public long endS2;
+	public long startOfExperiment;
 
-	public GUIHandlerS2(int width, int height){
+	public GUIHandlerS2(int width, int height, long milis){
+		startOfExperiment = milis;
 		screenWidth = width;
 		screenHeight = height;
 		iBtnToClick = 0;
 		//fullScreenImg Coords
 		pBtnsCoords = new Point[6][3];
 		//upper row
-		pBtnsCoords[0][0] = new Point(screenWidth*0.05, screenHeight*0.05);
-		pBtnsCoords[0][1] = new Point(screenWidth*0.28, screenHeight*0.45);
+		pBtnsCoords[0][0] = new Point(screenWidth*0.0, screenHeight*0.0);
+		pBtnsCoords[0][1] = new Point(screenWidth*0.32, screenHeight*0.49);
 		pBtnsCoords[0][2] = new Point(screenWidth*0.15, screenHeight*0.25);
 		
-		pBtnsCoords[1][0] = new Point(screenWidth*0.38, screenHeight*0.05);
-		pBtnsCoords[1][1] = new Point(screenWidth*0.61, screenHeight*0.45);
+		pBtnsCoords[1][0] = new Point(screenWidth*0.33, screenHeight*0.0);
+		pBtnsCoords[1][1] = new Point(screenWidth*0.65, screenHeight*0.49);
 		pBtnsCoords[1][2] = new Point(screenWidth*0.48, screenHeight*0.25);
 		
-		pBtnsCoords[2][0] = new Point(screenWidth*0.71, screenHeight*0.05);
-		pBtnsCoords[2][1] = new Point(screenWidth*0.95, screenHeight*0.45);
+		pBtnsCoords[2][0] = new Point(screenWidth*0.66, screenHeight*0.0);
+		pBtnsCoords[2][1] = new Point(screenWidth, screenHeight*0.49);
 		pBtnsCoords[2][2] = new Point(screenWidth*0.81, screenHeight*0.25);
 		//lower row
-		pBtnsCoords[3][0] = new Point(screenWidth*0.05, screenHeight*0.55);
-		pBtnsCoords[3][1] = new Point(screenWidth*0.28, screenHeight*0.95);
+		pBtnsCoords[3][0] = new Point(screenWidth*0.0, screenHeight*0.50);
+		pBtnsCoords[3][1] = new Point(screenWidth*0.32, screenHeight);
 		pBtnsCoords[3][2] = new Point(screenWidth*0.15, screenHeight*0.75);
 		
-		pBtnsCoords[4][0] = new Point(screenWidth*0.38, screenHeight*0.55);
-		pBtnsCoords[4][1] = new Point(screenWidth*0.61, screenHeight*0.95);
+		pBtnsCoords[4][0] = new Point(screenWidth*0.33, screenHeight*0.50);
+		pBtnsCoords[4][1] = new Point(screenWidth*0.65, screenHeight);
 		pBtnsCoords[4][2] = new Point(screenWidth*0.48, screenHeight*0.75);
 		
-		pBtnsCoords[5][0] = new Point(screenWidth*0.71, screenHeight*0.55);
-		pBtnsCoords[5][1] = new Point(screenWidth*0.95, screenHeight*0.95);
+		pBtnsCoords[5][0] = new Point(screenWidth*0.66, screenHeight*0.50);
+		pBtnsCoords[5][1] = new Point(screenWidth, screenHeight);
 		pBtnsCoords[5][2] = new Point(screenWidth*0.81, screenHeight*0.75);
 
 	}
@@ -65,7 +68,7 @@ public class GUIHandlerS2 {
 		}
 
 		Mat output = new Mat();
-		Core.addWeighted(mRgb, 0.5, rec, 0.5, 0, output);
+		Core.addWeighted(mRgb, 0, rec, 1.0, 0, output);
 
 		return output;
 	}
@@ -92,6 +95,8 @@ public class GUIHandlerS2 {
 			iBtnToClick = iBtnToClick + 1;
 			if(iBtnsClicked == 6){
 				allClicked = true;
+				endS2 = System.currentTimeMillis();
+				Log.i("GUIHandlerS2", "endS2 - startOfExperiment :: "+ (endS2 - startOfExperiment)/1000 + " secs");
 			}
 			return true;
 		}

@@ -17,9 +17,6 @@ import org.opencv.imgproc.Imgproc;
 import android.util.Log;
 
 public class PointSelectExperiment {
-
-	private boolean bShowingHand = true;
-	private boolean bShowingHandContour = false;
 	
 	private MatOfPoint mHandContour;
 	private List<MatOfPoint> lHandContour;
@@ -46,6 +43,7 @@ public class PointSelectExperiment {
 //	private boolean[] screenShowing;
 	private Point lastPointedLocation;
 	private double toShift;
+	public long startOfExperiment;
 	
 	private boolean bInitPointSelect = true;
 	private double iScaleFactor = 2.5;
@@ -75,10 +73,11 @@ public class PointSelectExperiment {
 		kernelErode = Mat.ones(kernelSizeE, kernelSizeE, CvType.CV_8U);
 		kernelDilate = Mat.ones(kernelSizeD, kernelSizeD, CvType.CV_8U);
 
-		guiHandlerS1 = new GUIHandlerS1(screenWidth, screenHeight);
-		guiHandlerS2 = new GUIHandlerS2(screenWidth, screenHeight);
-		guiHandlerS3 = new GUIHandlerS3(screenWidth, screenHeight);
+		startOfExperiment = System.currentTimeMillis();
 
+		guiHandlerS1 = new GUIHandlerS1(screenWidth, screenHeight, startOfExperiment);
+		guiHandlerS2 = new GUIHandlerS2(screenWidth, screenHeight, startOfExperiment);
+		guiHandlerS3 = new GUIHandlerS3(screenWidth, screenHeight, startOfExperiment);
 	}
 
 	public Mat handleFrame(Mat mFrame) {
@@ -99,9 +98,7 @@ public class PointSelectExperiment {
 		Imgproc.dilate(mBin, mBin, kernelDilate);
 
 		Imgproc.findContours(mBin, contours, hierarchy, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-		if(!bShowingHand || bShowingHandContour){
-			mRgb = Mat.zeros(mRgb.size(), mRgb.type());
-		}
+		mRgb = Mat.zeros(mRgb.size(), mRgb.type());
 		mRgb = drawGUI(mRgb);
 		double biggestArea = 0;
 		int indexBiggestArea = -1;
@@ -142,33 +139,33 @@ public class PointSelectExperiment {
 				MatOfPoint2f result_temp_contour = new MatOfPoint2f();
 				Imgproc.approxPolyDP(temp_contour, result_temp_contour, epsilon, true);
 				mHandContour = new MatOfPoint(result_temp_contour.toArray());
-
+				mHandContour = shiftContour(mHandContour);
 				temp_contour.release();
 				result_temp_contour.release();
 
 				lHandContour.add(mHandContour);
 				handContourCentroid = Tools.getCentroid(mHandContour);
 				//draw circle in centroid of contour
-				if(bShowingHand){
+//				if(bShowingHand){
 					Core.circle(mRgb, handContourCentroid, 5, Tools.red, -1);
-				}
+//				}
 				//            Log.i("contours-info", "contours="+contours.size()+" size="+biggestArea);
 				/* 
 				 * handContour == biggestContour 
 				 * but Imgproc.drawContours method takes only List<MapOfPoint> as parameter
 				 */
 //				Imgproc.drawContours(mRgb, lHandContour, -1, Tools.green, 1);
-				if(bShowingHandContour){
-					Imgproc.drawContours(mRgb,  shiftContour(lHandContour), -1, Tools.green, 1);
-				}else if(bShowingHand){
+//				if(bShowingHandContour){
+//					Imgproc.drawContours(mRgb,  shiftContour(lHandContour), -1, Tools.green, 1);
+//				}else if(bShowingHand){
 					Imgproc.drawContours(mRgb, lHandContour, -1, Tools.green, 1);
-				}
+//				}
 				Imgproc.convexHull(mHandContour, convexHull, true);
 				Imgproc.convexityDefects(mHandContour, convexHull, convexityDefects);
 				lFinalDefects = Gestures.filterDefects(convexityDefects, mHandContour);
-				if(bShowingHand || bShowingHandContour){
+//				if(bShowingHand || bShowingHandContour){
 					mRgb = Tools.drawDefects(mRgb, lFinalDefects, handContourCentroid);
-				}
+//				}
 				detectGesture(handContourCentroid, lFinalDefects);
 //				//        	Log.i("check", "handleFrame - biggestArea found");
 //				if(screenShowing[0] == false){
@@ -197,16 +194,20 @@ public class PointSelectExperiment {
 
 	}
 
-	private List<MatOfPoint> shiftContour(List<MatOfPoint> lhand) {
-		Point[] points = lhand.get(0).toArray();
+	private MatOfPoint shiftContour(MatOfPoint mHand) {
+		Point[] points = mHand.toArray();
+		Point temp = points[0].clone();
+		
+		double toShift = temp.y;
+		temp.y = temp.y * iScaleFactor;
+		toShift = temp.y - toShift;		
+		
 		for(int i=0; i< points.length; i++){
 			points[i].y += toShift; 
 		}
 		MatOfPoint mResult = new MatOfPoint();
 		mResult.fromArray(points);
-		List<MatOfPoint> result = new ArrayList<MatOfPoint>();
-		result.add(mResult);
-		return result;
+		return mResult;
 	}
 
 	private Mat drawGUI(Mat mRgb) {
@@ -221,21 +222,7 @@ public class PointSelectExperiment {
 			mRgb = guiHandlerS3.drawSquares(mRgb);
 			Log.i("PointSelectExperiment", "Drawing screen 3");
 		}else{
-			if(bShowingHand == true){
-				bShowingHand = false;
-				bShowingHandContour = true;
-				guiHandlerS1.reset();
-				guiHandlerS2.reset();
-				guiHandlerS3.reset();
-			}else if(bShowingHandContour == true){
-				bShowingHand = false;
-				bShowingHandContour = false;
-				guiHandlerS1.reset();
-				guiHandlerS2.reset();
-				guiHandlerS3.reset();
-			}else{
-				mRgb = guiHandlerS1.writeInfoToImage(mRgb, new Point(screenWidth/2, screenHeight/2),"Finished!");
-			}
+			mRgb = guiHandlerS1.writeInfoToImage(mRgb, new Point(screenWidth/2, screenHeight/2),"Finished!");
 		}
 		return mRgb;
 	}
@@ -243,23 +230,21 @@ public class PointSelectExperiment {
 	/*******************gestures methods**************************/
 
 	private void detectGesture(Point centroid, List<Point[]> lDefects) {
-		if(lastPointedLocation != null){
-			Core.circle(mRgb, lastPointedLocation, 5, Tools.magenta, -1);
-		}
+
 		if(bInitPointSelect){
 			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
 			if(detectedPoint != null){
-				if((bShowingHand) == true){
+//				if((bShowingHand) == true){
 					addPointedLocation(detectedPoint);
-				}else{
-					if(detectedPoint.y > screenHeight/iScaleFactor){
-						detectedPoint.y = screenHeight/iScaleFactor;
-					}
-					toShift = detectedPoint.y; 
-					detectedPoint.y = detectedPoint.y * iScaleFactor;
-					toShift = detectedPoint.y - toShift;
-					addPointedLocation(detectedPoint);
-				}
+//				}else{
+//					if(detectedPoint.y > screenHeight/iScaleFactor){
+//						detectedPoint.y = screenHeight/iScaleFactor;
+//					}
+//					toShift = detectedPoint.y; 
+//					detectedPoint.y = detectedPoint.y * iScaleFactor;
+//					toShift = detectedPoint.y - toShift;
+//					addPointedLocation(detectedPoint);
+//				}
 				lastPointedLocation = getLastPointedLocation();
 				bInitPointSelect = false;
 				return;
@@ -267,10 +252,12 @@ public class PointSelectExperiment {
 		}else{
 			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, true);
 			if(detectedPoint != null){
+				Core.circle(mRgb, lastPointedLocation, 5, Tools.white, -1);
 				if(guiHandlerS1.allClicked == false && guiHandlerS1.onClick(lastPointedLocation) == true){
 					bInitPointSelect = true;
 					return;
-				}else if(guiHandlerS2.allClicked == false && guiHandlerS2.onClick(lastPointedLocation) == true){
+				}else 
+					if(guiHandlerS2.allClicked == false && guiHandlerS2.onClick(lastPointedLocation) == true){
 					bInitPointSelect = true;
 					return;
 				}else if(guiHandlerS3.allClicked == false && guiHandlerS3.onClick(lastPointedLocation) == true){
@@ -280,17 +267,19 @@ public class PointSelectExperiment {
 			}
 			detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
 			if(detectedPoint != null){
-				if((bShowingHand) == true){
+//				if((bShowingHand) == true){
 					addPointedLocation(detectedPoint);
-				}else{
-					if(detectedPoint.y > screenHeight/iScaleFactor){
-						detectedPoint.y = screenHeight/iScaleFactor;
-					}
-					toShift = detectedPoint.y;
-					detectedPoint.y = detectedPoint.y * iScaleFactor;
-					toShift = detectedPoint.y - toShift;
-					addPointedLocation(detectedPoint);
-				}
+//				}else{
+//					if(detectedPoint.y > screenHeight/iScaleFactor){
+//						detectedPoint.y = screenHeight/iScaleFactor;
+//					}
+//					toShift = detectedPoint.y;
+//					detectedPoint.y = detectedPoint.y * iScaleFactor;
+//					toShift = detectedPoint.y - toShift;
+//					addPointedLocation(detectedPoint);
+//				}
+					Core.circle(mRgb, lastPointedLocation, 5, Tools.magenta, -1);
+
 				lastPointedLocation = getLastPointedLocation();
 				bInitPointSelect = false;
 				return;
@@ -299,7 +288,7 @@ public class PointSelectExperiment {
 	}
 
 	private void addPointedLocation(Point pointedLoc){
-		if(lPointedLocations.size() > 10){
+		if(lPointedLocations.size() > 0){
 			lPointedLocations.remove(0);
 		}
 
@@ -309,15 +298,18 @@ public class PointSelectExperiment {
 	private Point getLastPointedLocation(){
 		int x = 0;
 		int y = 0;
-		int weights = 0;
-		for(int i = 0; i< lPointedLocations.size(); i++){
-			x += lPointedLocations.get(i).x* (i/4);
-			y += lPointedLocations.get(i).y* (i/4);
-			weights += (i/4);
-		}
-		x = (x == 0)? 0: x/weights;
-		y = (y == 0)? 0: y/weights;
+//		int weights = 0;
+//		for(int i = 0; i< lPointedLocations.size(); i++){
+//			x += lPointedLocations.get(i).x* (i/4);
+//			y += lPointedLocations.get(i).y* (i/4);
+//			weights += (i/4);
+//		}
+//		x = (x == 0)? 0: x/weights;
+//		y = (y == 0)? 0: y/weights;
 		Point result = new Point(x, y);
+		if(lPointedLocations.size() >0){
+			result = lPointedLocations.get(0);
+		}
 		return result;
 	}
 	

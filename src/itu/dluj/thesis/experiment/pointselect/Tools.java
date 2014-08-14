@@ -17,6 +17,7 @@ public class Tools {
 	public static Scalar blue = new Scalar(0,0,255);
 	public static Scalar magenta = new Scalar(255,0,255);
 	public static Scalar gray = new Scalar(10, 10, 10);
+	public static Scalar white = new Scalar(255, 255, 255);
 	
 	/*************************** Utility methods ************************************/
 
@@ -31,17 +32,16 @@ public class Tools {
 		 */
 		Point start;
 //		Point end;
-		Point farthest;
 		//		float depth;
 
 		for(int i=0; i< convexityDefects.size(); i++){
 			start = convexityDefects.get(i)[0]; 
-			farthest = convexityDefects.get(i)[1];
+//			farthest = convexityDefects.get(i)[1];
 			//		        line from farthest point to start
 //			Core.line(mRgb, farthest, start, red, 1);
 			//		        line from center of contour to start
 //			Core.line(mRgb, start, handContourCentroid, blue, 1);
-			Core.circle(mRgb, start, 2, red, -1);
+			Core.circle(mRgb, start, 3, red, -1);
 		}
 		return mRgb;
 	}
