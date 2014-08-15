@@ -44,12 +44,12 @@ public class GUIHandlerS1 {
 		if(bBtnsClicked[0] == true){
 			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.green, -1);
 		}else{
-			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.red, -1);
+			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.blue, -1);
 		}
 		if(bBtnsClicked[1] == true){
 			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.green, -1);
 		}else{
-			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.red, -1);
+			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.blue, -1);
 		}
 		
 		rec = writeInfoToImage(rec, pBtnsCoords[0][2], "1");

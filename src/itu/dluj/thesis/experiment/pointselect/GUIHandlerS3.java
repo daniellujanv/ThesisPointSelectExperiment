@@ -89,7 +89,7 @@ public class GUIHandlerS3 {
 			if(bBtnsClicked[i] == true){
 				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.green, -1);
 			}else{
-				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.red, -1);
+				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.blue, -1);
 			}
 			rec = writeInfoToImage(rec, pBtnsCoords[i][2], ""+(i+1));
 		}
@@ -113,7 +113,9 @@ public class GUIHandlerS3 {
 		 * Coords [2] == upper left outer rectangle
 		 * Coords [3] == lower right outer rectangle
 		 */
-		Rect rect_one = new Rect(pBtnsCoords[iBtnToClick][0], pBtnsCoords[iBtnToClick][1]);
+		Rect rect_one = new Rect(pBtnsCoords[iBtnToClick][0], pBtnsCoords[iBtnToClick][1]);		
+		Log.i("GUIHandlerS3", "iBtnToClick::"+iBtnToClick);
+
 		if(click.inside(rect_one)){
 			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;

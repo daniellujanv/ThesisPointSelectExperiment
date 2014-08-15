@@ -253,17 +253,28 @@ public class PointSelectExperiment {
 			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, true);
 			if(detectedPoint != null){
 				Core.circle(mRgb, lastPointedLocation, 5, Tools.white, -1);
-				if(guiHandlerS1.allClicked == false && guiHandlerS1.onClick(lastPointedLocation) == true){
-					bInitPointSelect = true;
-					return;
-				}else 
-					if(guiHandlerS2.allClicked == false && guiHandlerS2.onClick(lastPointedLocation) == true){
-					bInitPointSelect = true;
-					return;
-				}else if(guiHandlerS3.allClicked == false && guiHandlerS3.onClick(lastPointedLocation) == true){
-					bInitPointSelect = true;
-					return;
+				if(guiHandlerS1.allClicked == false ){ 
+					if(guiHandlerS1.onClick(lastPointedLocation) == true){
+						bInitPointSelect = true;
+						Log.i("GUIHandlerS1", "Click :: Good click ::"+ lastPointedLocation.toString());
+						return;
+					}
+				}else if(guiHandlerS2.allClicked == false){
+						
+					if(guiHandlerS2.onClick(lastPointedLocation) == true){
+						bInitPointSelect = true;
+						Log.i("GUIHandlerS2", "Click :: Good click "+ lastPointedLocation.toString());
+						return;
+					}
+				}else if(guiHandlerS3.allClicked == false){ 
+					if(guiHandlerS3.onClick(lastPointedLocation) == true){
+						bInitPointSelect = true;
+						Log.i("GUIHandlerS3", "Click :: Good click "+ lastPointedLocation.toString());
+						return;
+					}
 				}
+				Log.i("GUIHandler", "Click :: Bad click "+ lastPointedLocation.toString());
+
 			}
 			detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
 			if(detectedPoint != null){

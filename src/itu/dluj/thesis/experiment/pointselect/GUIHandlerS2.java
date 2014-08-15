@@ -62,7 +62,7 @@ public class GUIHandlerS2 {
 			if(bBtnsClicked[i] == true){
 				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.green, -1);
 			}else{
-				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.red, -1);
+				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.blue, -1);
 			}
 			rec = writeInfoToImage(rec, pBtnsCoords[i][2], ""+(i+1));
 		}
