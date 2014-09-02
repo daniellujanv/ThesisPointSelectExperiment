@@ -119,7 +119,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 					 Log.i("MainActivity", "Error mkdirs");
 				 }
 				 //				 File path = this.getExternalFilesDir(null);
-				 String fileName = "pointSelectExperiment_logcatParticipant1.txt";
+				 String fileName = "pointSelectExperiment_logcatParticipant6.txt";
 				 File file = new File(path, fileName);
 			     try {
 			    	 OutputStream os = new FileOutputStream(file);
@@ -127,7 +127,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 			    	 os.write(("testng").getBytes());
 			    	 os.close();
 			    	 Log.i("bla", "closing");
-			    	 Runtime.getRuntime().exec(new String[]{"logcat", "-f", file.getPath(), "itu.dluj.tesisprototype_iteration2:I"});
+			    	 Runtime.getRuntime().exec(new String[]{"logcat", "-f", file.getPath(), "itu.dluj.thesis.experiment.pointselect:I"});
 			    	 Log.i("bla", "logcat done :: "+ path.toString());
 			    	 Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
 			    	    mediaScanIntent.setData(Uri.fromFile(file));
