@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
@@ -34,7 +35,7 @@ import android.view.WindowManager;
  * 
  */
 public class MainActivity extends Activity implements CvCameraViewListener2 {
-	
+
 	private JavaCameraView mOpenCvCameraView;
 	private PointSelectExperiment psExp;
 	private MenuItem miFrontCamera;
@@ -44,14 +45,15 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 	private int cameraIndex;
 	private int screenWidth;
 	private int screenHeight;
-
-//	private Mat mProcessed;
+	private PrintStream ps;
+	private File file;
+	//	private Mat mProcessed;
 
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Log.i("opencv", "called onCreate");
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_main);
@@ -60,7 +62,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 		mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
 		if(
-//				sDeviceModel.equals("Nexus 5") ||
+				//				sDeviceModel.equals("Nexus 5") ||
 				sDeviceModel.equals("GT-S6810P")
 				){
 			mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
@@ -71,81 +73,84 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 		}
 		mOpenCvCameraView.enableFpsMeter();
 		mOpenCvCameraView.setCvCameraViewListener(this);
-	
+		
+		Log.i("storagedirectory", Environment.DIRECTORY_DOWNLOADS.toString());
+		String state = Environment.getExternalStorageState();
+		if (Environment.MEDIA_MOUNTED.equals(state)) {
+			Log.i("MainActivity", "Mdia mounted");
+			File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+			if(!path.mkdirs()){
+				Log.i("MainActivity", "Error mkdirs");
+			}
+			//				 File path = this.getExternalFilesDir(null);
+			String fileName = "logcatPSExperiment_1.txt";
+			file = new File(path, fileName);
+			try {
+//				OutputStream os = new FileOutputStream(file);
+				ps = new PrintStream(file);
+				ps.println("START OF EXPERIMENT");
+			}catch(IOException e){
+				Log.i("itu.dluj.thesis.experiment.pointselect", e.toString());
+			}
+		}
 	}
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        miFrontCamera = menu.add("Front Camera");
-        miBackCamera = menu.add("Back Camera");
-    	return true;
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	mOpenCvCameraView.disableView();
-        if(item == miFrontCamera){
-        	mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
-        }else if(item == miBackCamera){
-        	mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
-        }
-        mOpenCvCameraView.enableView();
-        return true;
-    }
-    
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		miFrontCamera = menu.add("Front Camera");
+		miBackCamera = menu.add("Back Camera");
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		mOpenCvCameraView.disableView();
+		if(item == miFrontCamera){
+			mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_FRONT);
+		}else if(item == miBackCamera){
+			mOpenCvCameraView.setCameraIndex(CameraBridgeViewBase.CAMERA_ID_BACK);
+		}
+		mOpenCvCameraView.enableView();
+		return true;
+	}
+
 	/**
 	 * *********************************************
 	 * OPENCV
 	 * *********************************************
 	 */
 
-	 @Override
-	 public void onPause()
-	 {
-		 Log.i("pause", "app paused");
-		 super.onPause();
-	     if (mOpenCvCameraView != null)
-	         mOpenCvCameraView.disableView();
-	 }
+	@Override
+	public void onPause()
+	{
+		Log.i("pause", "app paused");
+		super.onPause();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
+	}
 
-	 public void onDestroy() {
-		 Log.i("storagedirectory", Environment.DIRECTORY_DOWNLOADS.toString());
-		 String state = Environment.getExternalStorageState();
-		    if (Environment.MEDIA_MOUNTED.equals(state)) {
-		    	Log.i("MainActivity", "Mdia mounted");
-				 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-				 if(!path.mkdirs()){
-					 Log.i("MainActivity", "Error mkdirs");
-				 }
-				 //				 File path = this.getExternalFilesDir(null);
-				 String fileName = "pointSelectExperiment_logcatParticipant6.txt";
-				 File file = new File(path, fileName);
-			     try {
-			    	 OutputStream os = new FileOutputStream(file);
-			    	 Log.i("bla", "writting");
-			    	 os.write(("testng").getBytes());
-			    	 os.close();
-			    	 Log.i("bla", "closing");
-			    	 Runtime.getRuntime().exec(new String[]{"logcat", "-f", file.getPath(), "itu.dluj.thesis.experiment.pointselect:I"});
-			    	 Log.i("bla", "logcat done :: "+ path.toString());
-			    	 Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
-			    	    mediaScanIntent.setData(Uri.fromFile(file));
-			    	    this.sendBroadcast(mediaScanIntent);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					 Log.i("storagedirectory", e.toString());
-				}
-		    }else{
-		    	Log.i("MainActivity", "Mdia NOT mounted");
-		    }
+	public void onDestroy() {
+		Log.i("bla", "writting");
+		//				os.write(("testng").getBytes());
+		ps.println("END OF EXPERIMENT");
+		ps.close();
+		//				os.close();
+		Log.i("bla", "closing");
+//			Runtime.getRuntime().exec("logcat -d -v threadtime -f " + file.getPath() +" *:S itu.dluj.thesis.experiment.pointselect");
+//			Log.i("bla", "logcat done :: "+ path.toString());
 
-		 Log.i("crash", "app crashed");
-	     super.onDestroy();
-	     if (mOpenCvCameraView != null)
-	         mOpenCvCameraView.disableView();
-	 }
-	 
+		Log.i("crash", "app crashed");
+		
+		Intent mediaScanIntent = new Intent("android.intent.action.MEDIA_SCANNER_SCAN_FILE");
+		mediaScanIntent.setData(Uri.fromFile(file));
+		this.sendBroadcast(mediaScanIntent);
+		
+		super.onDestroy();
+		if (mOpenCvCameraView != null)
+			mOpenCvCameraView.disableView();
+	}
+
 	private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
 		@Override
 		public void onManagerConnected(int status) {
@@ -174,14 +179,14 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 	@Override
 	public void onCameraViewStarted(int width, int height) {				
 		Log.i("MainActivity", "size:: w:"+ width+" h:"+height);
-		psExp = new PointSelectExperiment();
+		psExp = new PointSelectExperiment(ps);
 		screenHeight = height;
 		screenWidth = width;
 	}
 
 	@Override
 	public void onCameraViewStopped() {
-		 Log.i("stop", "camera view stopped");
+		Log.i("stop", "camera view stopped");
 	}
 
 	@Override
@@ -192,7 +197,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 		}else{
 			output = inputFrame.rgba();
 		}
-		
+
 		Mat outputScaled = new Mat();
 		Imgproc.pyrDown(output, outputScaled);
 		outputScaled = psExp.handleFrame(outputScaled);
@@ -201,7 +206,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 		if(handCentroid != null){
 			mOpenCvCameraView.resetFMAreas(handCentroid, screenWidth, screenHeight);
 		}
-        return output;
+		return output;
 	}
 
 }

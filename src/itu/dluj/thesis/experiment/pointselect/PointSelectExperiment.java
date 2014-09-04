@@ -1,5 +1,7 @@
 package itu.dluj.thesis.experiment.pointselect;
 
+import java.io.PrintStream;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +46,14 @@ public class PointSelectExperiment {
 	private Point lastPointedLocation;
 	private double toShift;
 	public long startOfExperiment;
+	private PrintStream ps;
 	
 	private boolean bInitPointSelect = true;
 	private double iScaleFactor = 2.5;
+	private String TAG ="itu.dluj.thesis.experiment.pointselect";
 
-	public PointSelectExperiment(){
+	public PointSelectExperiment(PrintStream ps){
+		this.ps = ps;
 		screenWidth = 720/2;
 		screenHeight = 480/2;
 		screenArea = screenWidth*screenHeight;
@@ -75,9 +80,11 @@ public class PointSelectExperiment {
 
 		startOfExperiment = System.currentTimeMillis();
 
-		guiHandlerS1 = new GUIHandlerS1(screenWidth, screenHeight, startOfExperiment);
-		guiHandlerS2 = new GUIHandlerS2(screenWidth, screenHeight, startOfExperiment);
-		guiHandlerS3 = new GUIHandlerS3(screenWidth, screenHeight, startOfExperiment);
+		guiHandlerS1 = new GUIHandlerS1(screenWidth, screenHeight, startOfExperiment, ps);
+		guiHandlerS2 = new GUIHandlerS2(screenWidth, screenHeight, startOfExperiment, ps);
+		guiHandlerS3 = new GUIHandlerS3(screenWidth, screenHeight, startOfExperiment, ps);
+		Log.i(TAG, "Drawing screen 1");
+		ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+" :: Drawing screen 1");
 	}
 
 	public Mat handleFrame(Mat mFrame) {
@@ -118,7 +125,7 @@ public class PointSelectExperiment {
 		}
 
 		if(indexBiggestArea != -1){
-			Log.i("check", "procressImage init");
+//			Log.i("check", "procressImage init");
 			mHandContour = contours.get(indexBiggestArea);
 			//			Imgproc.drawContours(mRgb, contours, -1, Tools.red, 2);
 
@@ -164,7 +171,7 @@ public class PointSelectExperiment {
 				Imgproc.convexityDefects(mHandContour, convexHull, convexityDefects);
 				lFinalDefects = Gestures.filterDefects(convexityDefects, mHandContour);
 //				if(bShowingHand || bShowingHandContour){
-					mRgb = Tools.drawDefects(mRgb, lFinalDefects, handContourCentroid);
+//					mRgb = Tools.drawDefects(mRgb, lFinalDefects, handContourCentroid);
 //				}
 				detectGesture(handContourCentroid, lFinalDefects);
 //				//        	Log.i("check", "handleFrame - biggestArea found");
@@ -213,14 +220,11 @@ public class PointSelectExperiment {
 	private Mat drawGUI(Mat mRgb) {
 		//draw things after converting image to hsv so they don't interfere with gestures
 		if(guiHandlerS1.allClicked == false){
-			mRgb = guiHandlerS1.drawSquares(mRgb);
-			Log.i("PointSelectExperiment", "Drawing screen 1");
+			mRgb = guiHandlerS1.drawCircles(mRgb);
 		}else if(guiHandlerS2.allClicked == false){
-			mRgb = guiHandlerS2.drawSquares(mRgb);
-			Log.i("PointSelectExperiment", "Drawing screen 2");
+			mRgb = guiHandlerS2.drawCircles(mRgb);
 		}else if(guiHandlerS3.allClicked == false){
-			mRgb = guiHandlerS3.drawSquares(mRgb);
-			Log.i("PointSelectExperiment", "Drawing screen 3");
+			mRgb = guiHandlerS3.drawCircles(mRgb);
 		}else{
 			mRgb = guiHandlerS1.writeInfoToImage(mRgb, new Point(screenWidth/2, screenHeight/2),"Finished!");
 		}
@@ -256,25 +260,28 @@ public class PointSelectExperiment {
 				if(guiHandlerS1.allClicked == false ){ 
 					if(guiHandlerS1.onClick(lastPointedLocation) == true){
 						bInitPointSelect = true;
-						Log.i("GUIHandlerS1", "Click :: Good click ::"+ lastPointedLocation.toString());
+						Log.i(TAG, "GUIHandlerS1 :: Click :: Good click ::"+ lastPointedLocation.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS1 :: Click :: Good click ::"+ lastPointedLocation.toString());
 						return;
 					}
 				}else if(guiHandlerS2.allClicked == false){
 						
 					if(guiHandlerS2.onClick(lastPointedLocation) == true){
 						bInitPointSelect = true;
-						Log.i("GUIHandlerS2", "Click :: Good click "+ lastPointedLocation.toString());
+						Log.i(TAG, "GUIHandlerS2 :: Click :: Good click "+ lastPointedLocation.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS2 :: Click :: Good click ::"+ lastPointedLocation.toString());
 						return;
 					}
 				}else if(guiHandlerS3.allClicked == false){ 
 					if(guiHandlerS3.onClick(lastPointedLocation) == true){
 						bInitPointSelect = true;
-						Log.i("GUIHandlerS3", "Click :: Good click "+ lastPointedLocation.toString());
+						Log.i(TAG, "GUIHandlerS3 :: Click :: Good click "+ lastPointedLocation.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS3 :: Click :: Good click "+ lastPointedLocation.toString());
 						return;
 					}
 				}
-				Log.i("GUIHandler", "Click :: Bad click "+ lastPointedLocation.toString());
-
+				Log.i(TAG, "GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
+				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
 			}
 			detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
 			if(detectedPoint != null){

@@ -1,9 +1,11 @@
 package itu.dluj.thesis.experiment.pointselect;
 
+import java.io.PrintStream;
+import java.text.DateFormat;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
 import android.util.Log;
@@ -13,52 +15,48 @@ public class GUIHandlerS1 {
 	private int screenWidth;
 	private int screenHeight;
 	private int iBtnToClick;
-	private Point[][] pBtnsCoords;
-	private boolean[] bBtnsClicked = new boolean[]{false,false};
+	private Point[] pCirclesCoords;
+	private int iCircleRadius = 20;
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
 	public long endS1;
 	public long startOfExperiment;
+	private String TAG = "itu.dluj.thesis.experiment.pointselect";
+	private PrintStream ps;
 
-	public GUIHandlerS1(int width, int height, long milis){
+	public GUIHandlerS1(int width, int height, long milis, PrintStream ps){
+		this.ps = ps;
 		startOfExperiment = milis;
 		screenWidth = width;
 		screenHeight = height;
 		iBtnToClick = 0;
 		//fullScreenImg Coords
-		pBtnsCoords = new Point[2][3];
-		pBtnsCoords[0][0] = new Point(screenWidth*0.00, screenHeight*0.00);
-		pBtnsCoords[0][1] = new Point(screenWidth*0.49, screenHeight);
-		pBtnsCoords[0][2] = new Point(screenWidth*0.15, screenHeight*0.45);
-		
-		pBtnsCoords[1][0] = new Point(screenWidth*0.51, screenHeight*0.0);
-		pBtnsCoords[1][1] = new Point(screenWidth, screenHeight);
-		pBtnsCoords[1][2] = new Point(screenWidth*0.70, screenHeight*0.45);
+		pCirclesCoords = new Point[10];
+		pCirclesCoords[0] = new Point(screenWidth*0.20, screenHeight*0.20);
+		pCirclesCoords[1] = new Point(screenWidth*0.40, screenHeight*0.10);
+		pCirclesCoords[2] = new Point(screenWidth*0.10, screenHeight*0.40);
+		pCirclesCoords[3] = new Point(screenWidth*0.70, screenHeight*0.60);
+		pCirclesCoords[4] = new Point(screenWidth*0.50, screenHeight*0.35);
+		pCirclesCoords[5] = new Point(screenWidth*0.80, screenHeight*0.20);
+		pCirclesCoords[6] = new Point(screenWidth*0.40, screenHeight*0.60);
+		pCirclesCoords[7] = new Point(screenWidth*0.10, screenHeight*0.80);
+		pCirclesCoords[8] = new Point(screenWidth*0.50, screenHeight*0.70);
+		pCirclesCoords[9] = new Point(screenWidth*0.80, screenHeight*0.80);
 		
 	}
 	
 	/******************************** Drawing methods ****************************************/
 	
-	public Mat drawSquares(Mat mRgb){
-		Mat rec = mRgb;
-		if(bBtnsClicked[0] == true){
-			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.green, -1);
-		}else{
-			Core.rectangle(rec, pBtnsCoords[0][0], pBtnsCoords[0][1], Tools.blue, -1);
-		}
-		if(bBtnsClicked[1] == true){
-			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.green, -1);
-		}else{
-			Core.rectangle(rec, pBtnsCoords[1][0], pBtnsCoords[1][1], Tools.blue, -1);
-		}
+	public Mat drawCircles(Mat mRgb){
+//		for(int i = 0; i<10; i++){
+//			Core.circle(mRgb, pCirclesCoords[i], iCircleRadius, Tools.blue, -1);
+//			mRgb = writeInfoToImage(mRgb, pCirclesCoords[i], i+"");
+//		}
 		
-		rec = writeInfoToImage(rec, pBtnsCoords[0][2], "1");
-		rec = writeInfoToImage(rec, pBtnsCoords[1][2], "2");
+		Core.circle(mRgb, pCirclesCoords[iBtnToClick], iCircleRadius, Tools.blue, -1);
 
-		Mat output = new Mat();
-		Core.addWeighted(mRgb, 0, rec, 1.0, 0, output);
-
-		return output;
+		return mRgb;
+//		return output;
 	}
 	
 	
@@ -74,27 +72,40 @@ public class GUIHandlerS1 {
 		 * Coords [2] == upper left outer rectangle
 		 * Coords [3] == lower right outer rectangle
 		 */
-		Rect rect_one = new Rect(pBtnsCoords[iBtnToClick][0], pBtnsCoords[iBtnToClick][1]);
-		if(click.inside(rect_one)){
-			bBtnsClicked[iBtnToClick] = true;
+		
+		if(inside(pCirclesCoords[iBtnToClick], click)){
+//			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
-			if(iBtnsClicked == 2){
+			if(iBtnsClicked == pCirclesCoords.length){
 				allClicked = true;
 				endS1 = System.currentTimeMillis();
-				Log.i("GUIHandlerS1", "endS1 - startOfExperiment :: "+ (endS1 - startOfExperiment)/1000 + " secs");
+				Log.i(TAG, "END OF S1 :: startOfCondition :: "+ (endS1 - startOfExperiment)/1000 
+						+ " secs :: endOfCondition" + endS1/1000);
+				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: END OF S1 :: startOfCondition :: "+ (endS1 - startOfExperiment)/1000 
+						+ " secs :: endOfCondition" + endS1/1000);
+				Log.i(TAG, "Drawing screen 2");
+				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: Drawing screen 2");
 			}
+			
 			return true;
 		}
+		
 		return false;
 	}
 	
 	/******************************* Utility methods ******************************************/
+	
+	public boolean inside(Point circle, Point point){
+		double distance = Math.sqrt(Math.pow(circle.x - point.x, 2) + Math.pow(circle.y - point.y, 2));
+		return (distance <= iCircleRadius);
+	}
+
 	public void reset(){
 		iBtnToClick = 0;
 		iBtnsClicked = 0;
 		allClicked = false;
-		bBtnsClicked = new boolean[]{false,false};
+//		bBtnsClicked = new boolean[]{false,false};
 	}
 	
 	

@@ -1,9 +1,11 @@
 package itu.dluj.thesis.experiment.pointselect;
 
+import java.io.PrintStream;
+import java.text.DateFormat;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
 import android.util.Log;
@@ -13,91 +15,47 @@ public class GUIHandlerS3 {
 	private int screenWidth;
 	private int screenHeight;
 	private int iBtnToClick;
-	private Point[][] pBtnsCoords;
-	private boolean[] bBtnsClicked = new boolean[]{false,false,false, false, 
-													false, false, false,false,
-													false, false, false, false};
+	private Point[] pCirclesCoords;
+	private int iCircleRadius = 60;
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
 	public long endS3;
 	public long startOfExperiment;
-	
-	public GUIHandlerS3(int width, int height, long milis){
+	private String TAG = "itu.dluj.thesis.experiment.pointselect";
+	private PrintStream ps;
+
+	public GUIHandlerS3(int width, int height, long milis, PrintStream ps){
+		this.ps = ps;
 		startOfExperiment = milis;
 		screenWidth = width;
 		screenHeight = height;
 		iBtnToClick = 0;
 		//fullScreenImg Coords
-		pBtnsCoords = new Point[12][3];
-		//upper row
-		pBtnsCoords[0][0] = new Point(screenWidth*0.0, screenHeight*0.0);
-		pBtnsCoords[0][1] = new Point(screenWidth*0.24, screenHeight*0.32);
-		pBtnsCoords[0][2] = new Point(screenWidth*0.10, screenHeight*0.25);
+		pCirclesCoords = new Point[10];
+		pCirclesCoords[0] = new Point(screenWidth*0.20, screenHeight*0.20);
+		pCirclesCoords[1] = new Point(screenWidth*0.45, screenHeight*0.20);
+		pCirclesCoords[2] = new Point(screenWidth*0.20, screenHeight*0.40);
+		pCirclesCoords[3] = new Point(screenWidth*0.70, screenHeight*0.60);
+		pCirclesCoords[4] = new Point(screenWidth*0.50, screenHeight*0.30);
+		pCirclesCoords[5] = new Point(screenWidth*0.70, screenHeight*0.45);
+		pCirclesCoords[6] = new Point(screenWidth*0.49, screenHeight*0.60);
+		pCirclesCoords[7] = new Point(screenWidth*0.20, screenHeight*0.70);
+		pCirclesCoords[8] = new Point(screenWidth*0.80, screenHeight*0.80);
+		pCirclesCoords[9] = new Point(screenWidth*0.80, screenHeight*0.20);
 		
-		pBtnsCoords[1][0] = new Point(screenWidth*0.25, screenHeight*0.0);
-		pBtnsCoords[1][1] = new Point(screenWidth*0.49, screenHeight*0.32);
-		pBtnsCoords[1][2] = new Point(screenWidth*0.30, screenHeight*0.25);
-		
-		pBtnsCoords[2][0] = new Point(screenWidth*0.50, screenHeight*0.0);
-		pBtnsCoords[2][1] = new Point(screenWidth*0.74, screenHeight*0.32);
-		pBtnsCoords[2][2] = new Point(screenWidth*0.60, screenHeight*0.25);
-		
-		pBtnsCoords[3][0] = new Point(screenWidth*0.75, screenHeight*0.0);
-		pBtnsCoords[3][1] = new Point(screenWidth, screenHeight*0.32);
-		pBtnsCoords[3][2] = new Point(screenWidth*0.90, screenHeight*0.25);
-		
-		//middle row
-		pBtnsCoords[4][0] = new Point(screenWidth*0.0, screenHeight*0.33);
-		pBtnsCoords[4][1] = new Point(screenWidth*0.24, screenHeight*0.65);
-		pBtnsCoords[4][2] = new Point(screenWidth*0.10, screenHeight*0.55);
-
-		pBtnsCoords[5][0] = new Point(screenWidth*0.25, screenHeight*0.33);
-		pBtnsCoords[5][1] = new Point(screenWidth*0.49, screenHeight*0.65);
-		pBtnsCoords[5][2] = new Point(screenWidth*0.30, screenHeight*0.55);
-		
-		pBtnsCoords[6][0] = new Point(screenWidth*0.50, screenHeight*0.33);
-		pBtnsCoords[6][1] = new Point(screenWidth*0.74, screenHeight*0.65);
-		pBtnsCoords[6][2] = new Point(screenWidth*0.60, screenHeight*0.55);
-		
-		pBtnsCoords[7][0] = new Point(screenWidth*0.75, screenHeight*0.33);
-		pBtnsCoords[7][1] = new Point(screenWidth, screenHeight*0.65);
-		pBtnsCoords[7][2] = new Point(screenWidth*0.80, screenHeight*0.55);
-
-		//lower row
-		pBtnsCoords[8][0] = new Point(screenWidth*0.0, screenHeight*0.66);
-		pBtnsCoords[8][1] = new Point(screenWidth*0.24, screenHeight);
-		pBtnsCoords[8][2] = new Point(screenWidth*0.10, screenHeight*0.75);
-		
-		pBtnsCoords[9][0] = new Point(screenWidth*0.25, screenHeight*0.66);
-		pBtnsCoords[9][1] = new Point(screenWidth*0.49, screenHeight);
-		pBtnsCoords[9][2] = new Point(screenWidth*0.30, screenHeight*0.75);
-		
-		pBtnsCoords[10][0] = new Point(screenWidth*0.50, screenHeight*0.66);
-		pBtnsCoords[10][1] = new Point(screenWidth*0.74, screenHeight);
-		pBtnsCoords[10][2] = new Point(screenWidth*0.60, screenHeight*0.75);
-		
-		pBtnsCoords[11][0] = new Point(screenWidth*0.75, screenHeight*0.66);
-		pBtnsCoords[11][1] = new Point(screenWidth, screenHeight);
-		pBtnsCoords[11][2] = new Point(screenWidth*0.80, screenHeight*0.75);
 	}
 	
 	/******************************** Drawing methods ****************************************/
 	
-	public Mat drawSquares(Mat mRgb){
-		Mat rec = mRgb.clone();
-		for(int i = 0; i< 12; ++i){
-			if(bBtnsClicked[i] == true){
-				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.green, -1);
-			}else{
-				Core.rectangle(rec, pBtnsCoords[i][0], pBtnsCoords[i][1], Tools.blue, -1);
-			}
-			rec = writeInfoToImage(rec, pBtnsCoords[i][2], ""+(i+1));
-		}
+	public Mat drawCircles(Mat mRgb){
+//		for(int i = 0; i<10; i++){
+//			Core.circle(mRgb, pCirclesCoords[i], iCircleRadius, Tools.blue, -1);
+//			mRgb = writeInfoToImage(mRgb, pCirclesCoords[i], i+"");
+//		}
+		Core.circle(mRgb, pCirclesCoords[iBtnToClick], iCircleRadius, Tools.blue, -1);
 
-		Mat output = new Mat();
-		Core.addWeighted(mRgb, 0, rec, 1.0, 0, output);
-
-		return output;
+		return mRgb;
+//		return output;
 	}
 	
 	
@@ -113,30 +71,37 @@ public class GUIHandlerS3 {
 		 * Coords [2] == upper left outer rectangle
 		 * Coords [3] == lower right outer rectangle
 		 */
-		Rect rect_one = new Rect(pBtnsCoords[iBtnToClick][0], pBtnsCoords[iBtnToClick][1]);		
-		Log.i("GUIHandlerS3", "iBtnToClick::"+iBtnToClick);
-
-		if(click.inside(rect_one)){
-			bBtnsClicked[iBtnToClick] = true;
+		
+		if(inside(pCirclesCoords[iBtnToClick], click)){
+//			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
-			if(iBtnsClicked == 12){
-				endS3 = System.currentTimeMillis();
-				Log.i("GUIHandlerS3", "endS3 - startOfExperiment :: "+ (endS3 - startOfExperiment)/1000 + " secs");
+			if(iBtnsClicked == pCirclesCoords.length){
 				allClicked = true;
+				endS3 = System.currentTimeMillis();
+				Log.i(TAG, "END OF S3 :: startOfCondition :: "+ (endS3 - startOfExperiment)/1000 
+						+ " secs :: endOfCondition" + endS3/1000);
+				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: END OF S3 :: startOfCondition :: "+ (endS3 - startOfExperiment)/1000 
+						+ " secs :: endOfCondition" + endS3/1000);
 			}
 			return true;
 		}
-
+		
 		return false;
 	}
 	
 	/******************************* Utility methods ******************************************/
+	
+	public boolean inside(Point circle, Point point){
+		double distance = Math.sqrt(Math.pow(circle.x - point.x, 2) + Math.pow(circle.y - point.y, 2));
+		return (distance <= iCircleRadius);
+	}
+
 	public void reset(){
 		iBtnToClick = 0;
 		iBtnsClicked = 0;
 		allClicked = false;
-		bBtnsClicked =  new boolean[]{false,false,false, false, false, false, false,false,false, false};
+//		bBtnsClicked = new boolean[]{false,false};
 	}
 	
 	
@@ -153,7 +118,7 @@ public class GUIHandlerS3 {
 	 * Utility method - writes to color image
 	 */
 	public Mat writeInfoToImage(Mat mRgb, final String string) {
-		Point point = new Point();
+		Point point = new Point(screenWidth*0.05, screenHeight*0.95);
 		Core.putText(mRgb, string, point, Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(0,0,0), 5);
 		Core.putText(mRgb, string, point, Core.FONT_HERSHEY_SIMPLEX, 0.7, new Scalar(255,255,255), 1);
 		return mRgb;
