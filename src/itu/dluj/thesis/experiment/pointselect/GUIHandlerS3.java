@@ -19,6 +19,7 @@ public class GUIHandlerS3 {
 	private int iCircleRadius = 60;
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
+	public boolean firstTime = true;
 	public long endS3;
 	public long startOfExperiment;
 	private String TAG = "itu.dluj.thesis.experiment.pointselect";
@@ -71,8 +72,9 @@ public class GUIHandlerS3 {
 		 * Coords [2] == upper left outer rectangle
 		 * Coords [3] == lower right outer rectangle
 		 */
-		
+	
 		if(inside(pCirclesCoords[iBtnToClick], click)){
+			ps.println(TAG+":: circle coordinates (x,y) :: "+ pCirclesCoords[iBtnToClick].toString() + " :: radius :: "+ iCircleRadius);
 //			bBtnsClicked[iBtnToClick] = true;
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
@@ -80,9 +82,9 @@ public class GUIHandlerS3 {
 				allClicked = true;
 				endS3 = System.currentTimeMillis();
 				Log.i(TAG, "END OF S3 :: startOfCondition :: "+ (endS3 - startOfExperiment)/1000 
-						+ " secs :: endOfCondition" + endS3/1000);
+						+ " secs :: endOfCondition " + endS3/1000);
 				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: END OF S3 :: startOfCondition :: "+ (endS3 - startOfExperiment)/1000 
-						+ " secs :: endOfCondition" + endS3/1000);
+						+ " secs :: endOfCondition " + DateFormat.getTimeInstance().format(endS3));
 			}
 			return true;
 		}

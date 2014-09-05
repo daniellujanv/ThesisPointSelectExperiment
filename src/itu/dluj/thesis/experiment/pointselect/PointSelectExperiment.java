@@ -235,74 +235,89 @@ public class PointSelectExperiment {
 
 	private void detectGesture(Point centroid, List<Point[]> lDefects) {
 
-		if(bInitPointSelect){
-			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
-			if(detectedPoint != null){
-//				if((bShowingHand) == true){
-					addPointedLocation(detectedPoint);
-//				}else{
-//					if(detectedPoint.y > screenHeight/iScaleFactor){
-//						detectedPoint.y = screenHeight/iScaleFactor;
-//					}
-//					toShift = detectedPoint.y; 
-//					detectedPoint.y = detectedPoint.y * iScaleFactor;
-//					toShift = detectedPoint.y - toShift;
+//		if(bInitPointSelect){
+//			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
+//			if(detectedPoint != null){
+////				if((bShowingHand) == true){
 //					addPointedLocation(detectedPoint);
-//				}
-				lastPointedLocation = getLastPointedLocation();
-				bInitPointSelect = false;
-				return;
-			}
-		}else{
-			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, true);
+////				}else{
+////					if(detectedPoint.y > screenHeight/iScaleFactor){
+////						detectedPoint.y = screenHeight/iScaleFactor;
+////					}
+////					toShift = detectedPoint.y; 
+////					detectedPoint.y = detectedPoint.y * iScaleFactor;
+////					toShift = detectedPoint.y - toShift;
+////					addPointedLocation(detectedPoint);
+////				}
+//				lastPointedLocation = getLastPointedLocation();
+//				bInitPointSelect = false;
+//				return;
+//			}
+//		}else{
+//			Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, true);
+		Point detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false);
 			if(detectedPoint != null){
-				Core.circle(mRgb, lastPointedLocation, 5, Tools.white, -1);
+//				Core.circle(mRgb, lastPointedLocation, 5, Tools.white, -1);
+				Core.circle(mRgb, detectedPoint, 5, Tools.white, -1);
 				if(guiHandlerS1.allClicked == false ){ 
-					if(guiHandlerS1.onClick(lastPointedLocation) == true){
-						bInitPointSelect = true;
-						Log.i(TAG, "GUIHandlerS1 :: Click :: Good click ::"+ lastPointedLocation.toString());
-						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS1 :: Click :: Good click ::"+ lastPointedLocation.toString());
+					if(guiHandlerS1.firstTime){
+						guiHandlerS1.startOfExperiment = System.currentTimeMillis();
+						ps.println(TAG+":: Initial position hand :: "+ detectedPoint.toString());
+						guiHandlerS1.firstTime = false;
+					}
+					if(guiHandlerS1.onClick(detectedPoint) == true){
+//						bInitPointSelect = true;
+						Log.i(TAG, "GUIHandlerS1 :: Click :: Good click ::"+ detectedPoint.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS1 :: Click :: Good click ::"+ detectedPoint.toString());
 						return;
 					}
 				}else if(guiHandlerS2.allClicked == false){
-						
-					if(guiHandlerS2.onClick(lastPointedLocation) == true){
-						bInitPointSelect = true;
-						Log.i(TAG, "GUIHandlerS2 :: Click :: Good click "+ lastPointedLocation.toString());
-						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS2 :: Click :: Good click ::"+ lastPointedLocation.toString());
+					if(guiHandlerS2.firstTime){
+						guiHandlerS2.startOfExperiment = System.currentTimeMillis();
+						guiHandlerS2.firstTime = false;
+					}
+//					if(guiHandlerS2.onClick(lastPointedLocation) == true){
+					if(guiHandlerS2.onClick(detectedPoint) == true){
+//						bInitPointSelect = true;
+						Log.i(TAG, "GUIHandlerS2 :: Click :: Good click "+ detectedPoint.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS2 :: Click :: Good click ::"+ detectedPoint.toString());
 						return;
 					}
 				}else if(guiHandlerS3.allClicked == false){ 
-					if(guiHandlerS3.onClick(lastPointedLocation) == true){
-						bInitPointSelect = true;
-						Log.i(TAG, "GUIHandlerS3 :: Click :: Good click "+ lastPointedLocation.toString());
-						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS3 :: Click :: Good click "+ lastPointedLocation.toString());
+					if(guiHandlerS3.firstTime){
+						guiHandlerS3.startOfExperiment = System.currentTimeMillis();
+						guiHandlerS3.firstTime = false;
+					}
+					if(guiHandlerS3.onClick(detectedPoint) == true){
+//						bInitPointSelect = true;
+						Log.i(TAG, "GUIHandlerS3 :: Click :: Good click "+ detectedPoint.toString());
+						ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandlerS3 :: Click :: Good click "+ detectedPoint.toString());
 						return;
 					}
 				}
-				Log.i(TAG, "GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
-				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
+//				Log.i(TAG, "GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
+//				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: GUIHandler :: Click :: Bad click "+ lastPointedLocation.toString());
 			}
-			detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
-			if(detectedPoint != null){
-//				if((bShowingHand) == true){
-					addPointedLocation(detectedPoint);
-//				}else{
-//					if(detectedPoint.y > screenHeight/iScaleFactor){
-//						detectedPoint.y = screenHeight/iScaleFactor;
-//					}
-//					toShift = detectedPoint.y;
-//					detectedPoint.y = detectedPoint.y * iScaleFactor;
-//					toShift = detectedPoint.y - toShift;
+//			detectedPoint = Gestures.detectPointSelectGesture(lDefects, centroid, false); 
+//			if(detectedPoint != null){
+////				if((bShowingHand) == true){
 //					addPointedLocation(detectedPoint);
-//				}
-					Core.circle(mRgb, lastPointedLocation, 5, Tools.magenta, -1);
-
-				lastPointedLocation = getLastPointedLocation();
-				bInitPointSelect = false;
-				return;
-			}
-		}
+////				}else{
+////					if(detectedPoint.y > screenHeight/iScaleFactor){
+////						detectedPoint.y = screenHeight/iScaleFactor;
+////					}
+////					toShift = detectedPoint.y;
+////					detectedPoint.y = detectedPoint.y * iScaleFactor;
+////					toShift = detectedPoint.y - toShift;
+////					addPointedLocation(detectedPoint);
+////				}
+//					Core.circle(mRgb, lastPointedLocation, 5, Tools.magenta, -1);
+//
+//				lastPointedLocation = getLastPointedLocation();
+//				bInitPointSelect = false;
+//				return;
+//			}
+//		}
 	}
 
 	private void addPointedLocation(Point pointedLoc){

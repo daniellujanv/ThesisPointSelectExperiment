@@ -19,6 +19,7 @@ public class GUIHandlerS1 {
 	private int iCircleRadius = 20;
 	private int iBtnsClicked = 0;
 	public boolean allClicked = false;
+	public boolean firstTime = true;
 	public long endS1;
 	public long startOfExperiment;
 	private String TAG = "itu.dluj.thesis.experiment.pointselect";
@@ -52,7 +53,6 @@ public class GUIHandlerS1 {
 //			Core.circle(mRgb, pCirclesCoords[i], iCircleRadius, Tools.blue, -1);
 //			mRgb = writeInfoToImage(mRgb, pCirclesCoords[i], i+"");
 //		}
-		
 		Core.circle(mRgb, pCirclesCoords[iBtnToClick], iCircleRadius, Tools.blue, -1);
 
 		return mRgb;
@@ -72,18 +72,18 @@ public class GUIHandlerS1 {
 		 * Coords [2] == upper left outer rectangle
 		 * Coords [3] == lower right outer rectangle
 		 */
-		
 		if(inside(pCirclesCoords[iBtnToClick], click)){
 //			bBtnsClicked[iBtnToClick] = true;
+			ps.println(TAG+":: circle coordinates (x,y) :: "+ pCirclesCoords[iBtnToClick].toString() + " :: radius :: "+ iCircleRadius);
 			iBtnsClicked = iBtnsClicked + 1;
 			iBtnToClick = iBtnToClick + 1;
 			if(iBtnsClicked == pCirclesCoords.length){
 				allClicked = true;
 				endS1 = System.currentTimeMillis();
 				Log.i(TAG, "END OF S1 :: startOfCondition :: "+ (endS1 - startOfExperiment)/1000 
-						+ " secs :: endOfCondition" + endS1/1000);
+						+ " secs :: endOfCondition " + endS1/1000);
 				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: END OF S1 :: startOfCondition :: "+ (endS1 - startOfExperiment)/1000 
-						+ " secs :: endOfCondition" + endS1/1000);
+						+ " secs :: endOfCondition " + DateFormat.getTimeInstance().format(endS1));
 				Log.i(TAG, "Drawing screen 2");
 				ps.println(TAG+"::"+DateFormat.getTimeInstance().format(System.currentTimeMillis())+ " :: Drawing screen 2");
 			}
