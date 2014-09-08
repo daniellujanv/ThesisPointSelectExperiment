@@ -33,16 +33,16 @@ public class GUIHandlerS3 {
 		iBtnToClick = 0;
 		//fullScreenImg Coords
 		pCirclesCoords = new Point[10];
-		pCirclesCoords[0] = new Point(screenWidth*0.20, screenHeight*0.20);
-		pCirclesCoords[1] = new Point(screenWidth*0.45, screenHeight*0.20);
-		pCirclesCoords[2] = new Point(screenWidth*0.20, screenHeight*0.40);
-		pCirclesCoords[3] = new Point(screenWidth*0.70, screenHeight*0.60);
-		pCirclesCoords[4] = new Point(screenWidth*0.50, screenHeight*0.30);
-		pCirclesCoords[5] = new Point(screenWidth*0.70, screenHeight*0.45);
-		pCirclesCoords[6] = new Point(screenWidth*0.49, screenHeight*0.60);
-		pCirclesCoords[7] = new Point(screenWidth*0.20, screenHeight*0.70);
-		pCirclesCoords[8] = new Point(screenWidth*0.80, screenHeight*0.80);
-		pCirclesCoords[9] = new Point(screenWidth*0.80, screenHeight*0.20);
+		pCirclesCoords[0] = new Point(screenWidth*0.15, screenHeight*0.25);
+		pCirclesCoords[1] = new Point(screenWidth*0.65, screenHeight*0.40);
+		pCirclesCoords[2] = new Point(screenWidth*0.25, screenHeight*0.80);
+		pCirclesCoords[3] = new Point(screenWidth*0.70, screenHeight*0.65);
+		pCirclesCoords[4] = new Point(screenWidth*0.80, screenHeight*0.35);
+		pCirclesCoords[5] = new Point(screenWidth*0.45, screenHeight*0.85);
+		pCirclesCoords[6] = new Point(screenWidth*0.30, screenHeight*0.30);
+		pCirclesCoords[7] = new Point(screenWidth*0.80, screenHeight*0.60);
+		pCirclesCoords[8] = new Point(screenWidth*0.20, screenHeight*0.75);
+		pCirclesCoords[9] = new Point(screenWidth*0.75, screenHeight*0.20);
 		
 	}
 	

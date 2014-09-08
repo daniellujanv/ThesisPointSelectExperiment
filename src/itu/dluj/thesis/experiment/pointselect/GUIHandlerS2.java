@@ -18,7 +18,7 @@ public class GUIHandlerS2 {
 	private Point[] pCirclesCoords;
 	private int iCircleRadius = 40;
 	private int iBtnsClicked = 0;
-	public boolean allClicked = false;
+	public boolean allClicked = true;
 	public boolean firstTime = true;
 	public long endS2;
 	public long startOfExperiment;
