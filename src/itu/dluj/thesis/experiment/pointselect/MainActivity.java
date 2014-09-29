@@ -1,9 +1,7 @@
 package itu.dluj.thesis.experiment.pointselect;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.opencv.android.BaseLoaderCallback;
@@ -83,7 +81,7 @@ public class MainActivity extends Activity implements CvCameraViewListener2 {
 				Log.i("MainActivity", "Error mkdirs");
 			}
 			//				 File path = this.getExternalFilesDir(null);
-			String fileName = "logcatPSExperiment_1.txt";
+			String fileName = "logcatPSExperiment_9.txt";
 			file = new File(path, fileName);
 			try {
 //				OutputStream os = new FileOutputStream(file);
